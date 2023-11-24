@@ -229,7 +229,8 @@ class TelnyxClient {
   }
 
   void _onMessage(dynamic data) {
-    _logger.i('DEBUG MESSAGE: ${data.toString().trim()}');
+    _logger.i(
+        'DEBUG MESSAGE: ${data.toString().trim()} _gatewayState is $_gatewayState');
     if (data != null) {
       if (data.toString().trim().isNotEmpty) {
         _logger.i('Received WebSocket message :: ${data.toString().trim()}');
@@ -239,6 +240,32 @@ class TelnyxClient {
           var paramJson = jsonEncode(data.toString());
           _logger
               .i('Received WebSocket message - Contains Result :: $paramJson');
+
+          // This is a temporary fix for the REGED issue
+
+          if (data.toString().trim().contains("REGED")) {
+            var result = Result.fromJson(jsonDecode(data.toString()));
+            _logger.i('chrisb parsed result :: $result');
+
+            if (!_registered) {
+              ReceivedMessage stateMessage = ReceivedMessage.fromJson({
+                "jsonrpc": "2.0",
+                "method": "telnyx_rtc.clientReady",
+              });
+
+              _logger.i('GATEWAY REGISTERED');
+              _invalidateGatewayResponseTimer();
+              _resetGatewayCounters();
+              _gatewayState = GatewayState.REGED;
+              _waitingForReg = false;
+              var message = TelnyxMessage(
+                  socketMethod: SocketMethod.CLIENT_READY,
+                  message: stateMessage);
+              onSocketMessageReceived.call(message);
+              _registered = true;
+            }
+          }
+          // -----
         } else
         //Received Telnyx Method Message
         if (data.toString().trim().contains("method")) {
@@ -365,7 +392,7 @@ class TelnyxClient {
                     socketMethod: SocketMethod.GATEWAY_STATE,
                     message: stateMessage);
                 _logger.i(
-                    'Received WebSocket message - Contains State  :: ${stateMessage.toString()}');
+                    'chrisb Received WebSocket GATEWAY_STATE message - Contains State  :: ${stateMessage.toString()}');
                 switch (stateMessage.stateParams?.state) {
                   case GatewayState.REGED:
                     {
