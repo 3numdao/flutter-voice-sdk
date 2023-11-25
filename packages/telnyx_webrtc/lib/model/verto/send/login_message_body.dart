@@ -28,21 +28,21 @@ class LoginMessage {
 
 class LoginParams {
   String? login;
-  String? loginToken;
+  String? login_token;
   List<String>? loginParams;
   String? passwd;
   UserVariables? userVariables;
 
   LoginParams(
       {this.login,
-      this.loginToken,
+      this.login_token,
       this.loginParams,
       this.passwd,
       this.userVariables});
 
   LoginParams.fromJson(Map<String, dynamic> json) {
     login = json['login'];
-    login = json['loginToken'];
+    login = json['login_token'];
     if (json['loginParams'] != null) {
       loginParams = <String>[];
       json['loginParams'].forEach((v) {
@@ -58,7 +58,7 @@ class LoginParams {
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = <String, dynamic>{};
     data['login'] = login;
-    data['loginToken'] = loginToken;
+    data['login_token'] = login_token;
     if (loginParams != null) {
       data['loginParams'] = loginParams!.map((v) => v).toList();
     }

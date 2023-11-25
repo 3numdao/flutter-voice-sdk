@@ -186,7 +186,7 @@ class TelnyxClient {
     }
 
     var loginParams = LoginParams(
-        loginToken: token, loginParams: [], userVariables: notificationParams);
+        login_token: token, loginParams: [], userVariables: notificationParams);
     var loginMessage = LoginMessage(
         id: uuid,
         method: SocketMethod.LOGIN,
