@@ -29,10 +29,10 @@ class TelnyxClient {
   late OnSocketMessageReceived onSocketMessageReceived;
   late OnSocketErrorReceived onSocketErrorReceived;
 
-  TxSocket txSocket = TxSocket("wss://rtc.telnyx.com:443");
+  TxSocket txSocket;
   bool _closed = false;
   bool _connected = false;
-  final _logger = Logger();
+  final Logger _logger;
 
   /// The current session ID related to this client
   String sessid = const Uuid().v4();
@@ -60,6 +60,10 @@ class TelnyxClient {
   final String _storedHostAddress = "wss://rtc.telnyx.com:443";
   CredentialConfig? storedCredentialConfig;
   TokenConfig? storedTokenConfig;
+
+  TelnyxClient({Logger? logger})
+      : _logger = logger ?? Logger(),
+        txSocket = TxSocket("wss://rtc.telnyx.com:443", logger: logger);
 
   /// Returns whether or not the client is connected to the socket connection
   bool isConnected() {
