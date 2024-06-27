@@ -8,7 +8,7 @@ typedef OnOpenCallback = void Function();
 class TxSocket {
   TxSocket(this.hostAddress, {Logger? logger}) : _logger = logger ?? Logger();
 
-  final String hostAddress;
+  String hostAddress;
   final Logger _logger;
 
   late WebSocket _socket;

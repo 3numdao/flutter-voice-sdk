@@ -34,7 +34,7 @@ class TelnyxClient {
   String ringtonePath = "";
   String ringBackpath = "";
 
-  TelnyxClient({this.ringtonePath = '', this.ringBackpath = ''});
+//  TelnyxClient({this.ringtonePath = '', this.ringBackpath = ''});
 
   TxSocket txSocket;
   bool _closed = false;
@@ -43,7 +43,6 @@ class TelnyxClient {
 
   /// The current session ID related to this client
   String sessid = const Uuid().v4();
-
 
   // Gateway registration variables
   static const int RETRY_REGISTER_TIME = 3;
@@ -80,9 +79,10 @@ class TelnyxClient {
     return _gatewayState;
   }
 
-  void handlePushNotification(PushMetaData pushMetaData,CredentialConfig? credentialConfig,TokenConfig? tokenConfig){
+  void handlePushNotification(PushMetaData pushMetaData,
+      CredentialConfig? credentialConfig, TokenConfig? tokenConfig) {
     _pendingAnswerFromPush = true;
-    _connectWithCallBack(pushMetaData, (){
+    _connectWithCallBack(pushMetaData, () {
       if (credentialConfig != null) {
         credentialLogin(credentialConfig);
       } else if (tokenConfig != null) {
@@ -93,7 +93,8 @@ class TelnyxClient {
 
   /// Create a socket connection for
   /// communication with the Telnyx backend
-  void _connectWithCallBack(PushMetaData? pushMetaData,OnOpenCallback openCallback) {
+  void _connectWithCallBack(
+      PushMetaData? pushMetaData, OnOpenCallback openCallback) {
     _logger.i('connect()');
     if (isConnected() && pushMetaData?.voice_sdk_id == null) {
       _logger.i('WebSocket $_storedHostAddress is already connected');
@@ -119,9 +120,11 @@ class TelnyxClient {
         _onClose(true, closeCode, closeReason);
       };
 
-      if(pushMetaData?.voice_sdk_id != null){
-        txSocket.hostAddress = "$_storedHostAddress?voice_sdk_id=${pushMetaData?.voice_sdk_id}";
-        _logger.i('Connecting to WebSocket with voice_sdk_id :: ${pushMetaData?.voice_sdk_id}');
+      if (pushMetaData?.voice_sdk_id != null) {
+        txSocket.hostAddress =
+            "$_storedHostAddress?voice_sdk_id=${pushMetaData?.voice_sdk_id}";
+        _logger.i(
+            'Connecting to WebSocket with voice_sdk_id :: ${pushMetaData?.voice_sdk_id}');
       }
       txSocket.connect();
     } catch (e, s) {
@@ -186,7 +189,7 @@ class TelnyxClient {
   // Public getter to lazily initialize and return the value.
   Call get call {
     // If _call is null, initialize it with the default value.
-    if(_pendingBye){
+    if (_pendingBye) {
       _callEnded();
     }
     _call ??= _createCall();
@@ -202,7 +205,7 @@ class TelnyxClient {
   /// yourself on hold/mute.
   Call _createCall() {
     // Set global call parameter
-    _call = Call(txSocket, sessid, ringtonePath, ringBackpath,_callEnded);
+    _call = Call(txSocket, sessid, ringtonePath, ringBackpath, _callEnded);
     return _call!;
   }
 
@@ -230,10 +233,12 @@ class TelnyxClient {
     }
 
     var loginParams = LoginParams(
-        login: user,
-        passwd: password,
-        loginParams: [],
-        userVariables: notificationParams,attachCall: "true",);
+      login: user,
+      passwd: password,
+      loginParams: [],
+      userVariables: notificationParams,
+      attachCall: "true",
+    );
     var loginMessage = LoginMessage(
         id: uuid,
         method: SocketMethod.LOGIN,
@@ -271,7 +276,8 @@ class TelnyxClient {
         loginToken: token,
         loginParams: [],
         userVariables: notificationParams,
-        sessionId: sessid,attachCall: "true");
+        sessionId: sessid,
+        attachCall: "true");
     var loginMessage = LoginMessage(
         id: uuid,
         method: SocketMethod.LOGIN,
@@ -362,18 +368,24 @@ class TelnyxClient {
                           socketMethod: SocketMethod.CLIENT_READY,
                           message: mainMessage);
                       onSocketMessageReceived.call(message);
-                      if(_pendingAnswerFromPush){
+                      if (_pendingAnswerFromPush) {
                         _pendingAnswerFromPush = false;
                         //sending attach Call
-                        String platform = defaultTargetPlatform == TargetPlatform.android ? "android" : "ios";
+                        String platform =
+                            defaultTargetPlatform == TargetPlatform.android
+                                ? "android"
+                                : "ios";
 
                         AttachCallMessage attachCallMessage = AttachCallMessage(
                             method: SocketMethod.ATTACH_CALL,
                             id: const Uuid().v4(),
                             params: Params(
                                 pushNotificationProvider: platform,
-                                userVariables: <dynamic, dynamic>{"push_notification_environment":"debug"},
-                                loginParams: <dynamic, dynamic>{}),jsonrpc: "2.0");
+                                userVariables: <dynamic, dynamic>{
+                                  "push_notification_environment": "debug"
+                                },
+                                loginParams: <dynamic, dynamic>{}),
+                            jsonrpc: "2.0");
                         txSocket.send(jsonEncode(attachCallMessage));
                       }
                       _registered = true;
@@ -494,7 +506,8 @@ class TelnyxClient {
                 ReceivedMessage mediaReceived =
                     ReceivedMessage.fromJson(jsonDecode(data.toString()));
                 if (mediaReceived.inviteParams?.sdp != null) {
-                  call?.onRemoteSessionReceived(mediaReceived.inviteParams?.sdp);
+                  call?.onRemoteSessionReceived(
+                      mediaReceived.inviteParams?.sdp);
                   earlySDP = true;
                 } else {
                   _logger.d('No SDP contained within Media Message');
