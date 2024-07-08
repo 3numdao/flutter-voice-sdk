@@ -94,8 +94,9 @@ class Call {
     var byeDialogParams = ByeDialogParams(callId: callID);
 
     var byeParams = SendByeParams(
-        cause: CauseCode.NORMAL_CLEARING.name,
-        causeCode: CauseCode.NORMAL_CLEARING.index + 1,
+        cause: CauseCode.USER_BUSY
+            .name, // chrisb thinks this should be NORMAL_CLEARING, but the server is not handling it correctly
+        causeCode: CauseCode.USER_BUSY.index + 1,
         dialogParams: byeDialogParams,
         sessid: _sessid);
 
