@@ -94,8 +94,8 @@ class Call {
     var byeDialogParams = ByeDialogParams(callId: callID);
 
     var byeParams = SendByeParams(
-        cause: CauseCode.USER_BUSY.name,
-        causeCode: CauseCode.USER_BUSY.index + 1,
+        cause: CauseCode.NORMAL_CLEARING.name,
+        causeCode: CauseCode.NORMAL_CLEARING.index + 1,
         dialogParams: byeDialogParams,
         sessid: _sessid);
 
