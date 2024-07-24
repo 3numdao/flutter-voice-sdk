@@ -40,9 +40,9 @@ class Session {
 }
 
 class Peer {
-  Peer(this._socket);
+  Peer(this._socket, {Logger? logger}) : _logger = logger ?? Logger();
 
-  final _logger = Logger();
+  final _logger;
 
   final String _selfId = randomNumeric(6);
 

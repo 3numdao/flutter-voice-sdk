@@ -205,7 +205,8 @@ class TelnyxClient {
   /// yourself on hold/mute.
   Call _createCall() {
     // Set global call parameter
-    _call = Call(txSocket, sessid, ringtonePath, ringBackpath, _callEnded);
+    _call = Call(txSocket, sessid, ringtonePath, ringBackpath, _callEnded,
+        logger: _logger);
     return _call!;
   }
 

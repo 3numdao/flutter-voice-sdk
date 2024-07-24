@@ -21,7 +21,9 @@ import 'package:audioplayers/audioplayers.dart';
 /// creating invitations, declining calls, etc.
 class Call {
   Call(this._txSocket, this._sessid, this.ringToneFile, this.ringBackFile,
-      this.callEnded);
+      this.callEnded,
+      {Logger? logger})
+      : _logger = logger ?? Logger();
   final audioService = AudioService();
   final Function callEnded;
   final TxSocket _txSocket;
@@ -37,7 +39,7 @@ class Call {
   String sessionDestinationNumber = "";
   String sessionClientState = "";
   Map<String, String> customHeaders = {};
-  final _logger = Logger();
+  final Logger _logger;
 
   /// Creates an invitation to send to a [destinationNumber] or SIP Destination
   /// using the provided [callerName], [callerNumber] and a [clientState]
@@ -52,7 +54,7 @@ class Call {
     callId = const Uuid().v4();
     var base64State = base64.encode(utf8.encode(clientState));
 
-    peerConnection = Peer(_txSocket);
+    peerConnection = Peer(_txSocket, logger: _logger);
     peerConnection?.invite(callerName, callerNumber, destinationNumber,
         base64State, callId!, _sessid, customHeaders);
     //play ringback
@@ -81,7 +83,7 @@ class Call {
 
     var destinationNum = invite.callerIdNumber;
 
-    peerConnection = Peer(_txSocket);
+    peerConnection = Peer(_txSocket, logger: _logger);
     peerConnection?.accept(callerName, callerNumber, destinationNum!,
         clientState, callId!, invite, customHeaders);
 
