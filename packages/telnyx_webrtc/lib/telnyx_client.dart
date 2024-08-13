@@ -2,7 +2,6 @@
 
 import 'dart:async';
 import 'dart:convert';
-import 'dart:ffi';
 import 'package:logger/logger.dart';
 import 'package:telnyx_webrtc/model/verto/send/attach_call_message.dart';
 import '/call.dart';

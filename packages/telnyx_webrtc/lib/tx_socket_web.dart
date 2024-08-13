@@ -7,12 +7,12 @@ typedef OnCloseCallback = void Function(int code, String reason);
 typedef OnOpenCallback = void Function();
 
 class TxSocket {
-  TxSocket(this.hostAddress) {
+  TxSocket(this.hostAddress, {Logger? logger}) : _logger = logger ?? Logger() {
     hostAddress = hostAddress.replaceAll('https:', 'wss:');
   }
 
   String hostAddress;
-  final _logger = Logger();
+  final Logger _logger;
 
   late WebSocket _socket;
   late OnOpenCallback onOpen;

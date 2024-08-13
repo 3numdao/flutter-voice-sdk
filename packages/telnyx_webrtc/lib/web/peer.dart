@@ -40,9 +40,9 @@ class Session {
 }
 
 class Peer {
-  Peer(this._socket);
+  Peer(this._socket, {Logger? logger}) : _logger = logger ?? Logger();
 
-  final _logger = Logger();
+  final Logger _logger;
 
   final String _selfId = randomNumeric(6);
 
@@ -105,7 +105,6 @@ class Peer {
       _logger.d("Peer :: No local stream :: Unable to Mute / Unmute");
     }
   }
-
 
   void enableSpeakerPhone(bool enable) {
     if (kIsWeb) {
@@ -302,10 +301,13 @@ class Peer {
     }
   }
 
-  void closeSession(String sessionId) {
-    var sess = _sessions[sessionId];
+  void closeSession() {
+    var sess = _sessions[_selfId];
     if (sess != null) {
+      _logger.d("Session end success");
       _closeSession(sess);
+    } else {
+      _logger.d("Session end failed");
     }
   }
 
