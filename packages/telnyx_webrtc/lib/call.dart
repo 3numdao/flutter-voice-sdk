@@ -1,21 +1,20 @@
 import 'dart:convert';
 
 import 'package:flutter/foundation.dart';
+import 'package:just_audio/just_audio.dart';
 import 'package:logger/logger.dart';
 import 'package:telnyx_webrtc/model/jsonrpc.dart';
-import 'package:telnyx_webrtc/telnyx_client.dart';
-
-import '/model/socket_method.dart';
-import '/model/verto/receive/received_message_body.dart';
-import '/model/verto/send/send_bye_message_body.dart';
-import '/model/verto/send/info_dtmf_message_body.dart';
-import '/model/verto/send/invite_answer_message_body.dart';
-import '/model/verto/send/modify_message_body.dart';
-import '/peer/peer.dart' if (dart.library.html) '/web/peer.dart';
 import 'package:telnyx_webrtc/tx_socket.dart'
     if (dart.library.js) 'package:telnyx_webrtc/tx_socket_web.dart';
 import 'package:uuid/uuid.dart';
-import 'package:audioplayers/audioplayers.dart';
+
+import '/model/socket_method.dart';
+import '/model/verto/receive/received_message_body.dart';
+import '/model/verto/send/info_dtmf_message_body.dart';
+import '/model/verto/send/invite_answer_message_body.dart';
+import '/model/verto/send/modify_message_body.dart';
+import '/model/verto/send/send_bye_message_body.dart';
+import '/peer/peer.dart' if (dart.library.html) '/web/peer.dart';
 
 /// The Call class which is used for call related methods such as hold/mute or
 /// creating invitations, declining calls, etc.
@@ -219,12 +218,13 @@ class AudioService {
 
   Future<void> playLocalFile(String filePath) async {
     // Ensure the file path is correct and accessible from the web directory
-    await _audioPlayer.play(DeviceFileSource(filePath));
+    await _audioPlayer.setAudioSource(AudioSource.file(filePath));
+    await _audioPlayer.play();
   }
 
   Future<void> stopAudio() async {
     // Ensure the file path is correct and accessible from the web directory
-    _audioPlayer.stop();
-    await _audioPlayer.release();
+    await _audioPlayer.stop();
+    await _audioPlayer.dispose();
   }
 }
