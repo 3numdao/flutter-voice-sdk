@@ -48,6 +48,7 @@ class TelnyxClient {
   static const int RETRY_CONNECT_TIME = 3;
   static const int GATEWAY_RESPONSE_DELAY = 3000;
 
+  DateTime? _lastPing;
   Timer? _gatewayResponseTimer;
   bool _autoReconnectLogin = true;
   bool _waitingForReg = true;
@@ -71,6 +72,16 @@ class TelnyxClient {
   /// Returns whether or not the client is connected to the socket connection
   bool isConnected() {
     return _connected;
+  }
+
+  void disconnectStaleSocket() {
+    final now = DateTime.now();
+    if (_lastPing != null) {
+      final difference = now.difference(_lastPing!);
+      if (difference.inSeconds > 2 * 30) {
+        disconnect();
+      }
+    }
   }
 
   /// Returns the current Gateway state for the socket connection
@@ -451,6 +462,7 @@ class TelnyxClient {
                     result: result);
                 String jsonPongMessage = jsonEncode(pongMessage);
                 txSocket.send(jsonPongMessage);
+                _lastPing = DateTime.now();
                 break;
               }
             case SocketMethod.CLIENT_READY:
